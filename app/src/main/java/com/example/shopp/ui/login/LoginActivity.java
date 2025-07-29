@@ -50,8 +50,13 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences prefs = getApplication().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
                 prefs.edit().putString("user", strUser).apply();
 
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
+                if(user.getRole() == "ADMIN"){
+
+                }
+                else {
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
                 finish();
             }
         });

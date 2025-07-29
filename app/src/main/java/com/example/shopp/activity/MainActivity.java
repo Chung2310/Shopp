@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import com.example.shopp.R;
 import com.example.shopp.ui.account.AccountFragment;
 import com.example.shopp.ui.cart.CartFragment;
+import com.example.shopp.ui.chat.ChatFragment;
 import com.example.shopp.ui.home.HomeFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -35,7 +36,11 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_cart) {
                 selectedFragment = new CartFragment();
-            } else if (id == R.id.nav_account) {
+            }
+            else if (id == R.id.nav_chat) {
+                selectedFragment = new ChatFragment();
+            }
+            else if (id == R.id.nav_account) {
                 selectedFragment = new AccountFragment();
             }
 

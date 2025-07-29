@@ -1,18 +1,17 @@
 package com.example.shopp.model;
 
 public class CartItem {
-    private int id;
+    private Long id;
     private Book book;
     private int quantity;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
-
 
     public Book getBook() {
         return book;

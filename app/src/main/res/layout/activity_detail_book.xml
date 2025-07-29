@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F9F9F9">
 
-    <!-- Nội dung chi tiết cuộn được -->
+    <!-- Nội dung thông tin sách -->
     <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:id="@+id/scrollViewBookDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:fillViewport="true"
-        android:padding="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/buttonAddToCart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_marginBottom="80dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
             <ImageView
                 android:id="@+id/imgBook"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="300dp"
                 android:scaleType="centerCrop" />
 
             <TextView
@@ -36,8 +34,7 @@
                 android:text="Tên sách"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="#333"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="12dp" />
 
             <TextView
                 android:id="@+id/txtPrice"
@@ -49,6 +46,7 @@
                 android:textStyle="bold"
                 android:layout_marginTop="4dp" />
 
+            <!-- Các thông tin khác -->
             <TextView android:id="@+id/txtAuthor" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Tác giả:" android:textSize="16sp" />
             <TextView android:id="@+id/txtPublisher" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="NXB:" android:textSize="16sp" />
             <TextView android:id="@+id/txtPublishedDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ngày XB:" android:textSize="16sp" />
@@ -58,22 +56,61 @@
 
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mô tả:" android:textSize="18sp" android:textStyle="bold" android:layout_marginTop="12dp" />
             <TextView android:id="@+id/txtDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mô tả ở đây..." android:textSize="15sp" android:lineSpacingExtra="4dp" android:layout_marginTop="4dp" />
+            <Button
+                android:id="@+id/buttonAddToCart"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🛒 Thêm vào giỏ hàng"
+                android:textSize="16sp"
+                android:elevation="20dp"
+                android:translationZ="20dp"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#E53935"
+                android:layout_gravity="bottom"
+                android:layout_margin="16dp"/>
         </LinearLayout>
     </ScrollView>
 
-    <!-- Nút cố định -->
-    <Button
-        android:id="@+id/buttonAddToCart"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="🛒 Thêm vào giỏ hàng"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#E53935"
-        android:fontFamily="sans-serif-medium"
-        android:layout_margin="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <!-- Nút thêm vào giỏ hàng -->
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- BottomSheet chứa đánh giá -->
+    <LinearLayout
+        android:id="@+id/bottomSheetReviews"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:elevation="8dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_peekHeight="80dp"
+        app:behavior_hideable="false">
+
+        <ImageView
+            android:id="@+id/arrowUpIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/up_arrows"
+            android:contentDescription="Kéo lên để xem đánh giá" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📖 Đánh giá sản phẩm"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:padding="16dp"
+            android:textColor="#000000"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewReviews"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="8dp"
+            android:nestedScrollingEnabled="true"
+            android:overScrollMode="never"/>
+    </LinearLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

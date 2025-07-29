@@ -102,7 +102,7 @@ public class AccountViewModel extends AndroidViewModel {
 
         File file = new File(realPath);
         RequestBody requestFile = RequestBody.create(MediaType.parse(currentUploadMode+"/*"), file);
-        MultipartBody.Part body = MultipartBody.Part.createFormData(currentUploadMode, file.getName(), requestFile);
+        MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
         compositeDisposable.add(api.uploadImage(Utils.user.getId(), currentUploadMode, body)
                 .subscribeOn(Schedulers.io())

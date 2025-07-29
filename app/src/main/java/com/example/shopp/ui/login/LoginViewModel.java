@@ -56,11 +56,11 @@ public class LoginViewModel extends AndroidViewModel {
                                 SharedPreferences prefs = context.getSharedPreferences("TokenAuth", Context.MODE_PRIVATE);
                                 prefs.edit().putString("token", userModel.getResult().getToken()).apply();
                                 prefs.edit().putString("refreshToken", userModel.getResult().getRefreshToken()).apply();
-
+                                Log.d("token","accessToken: "+userModel.getResult().getToken());
+                                Log.d("token","refreshToken: "+userModel.getResult().getRefreshToken());
                             } else
                             if (userModel.getStatus() == 401)
                             {
-
                                 userLiveData.setValue(null);
                             }
                         },

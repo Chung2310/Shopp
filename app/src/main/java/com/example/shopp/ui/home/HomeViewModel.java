@@ -57,6 +57,24 @@ public class HomeViewModel extends AndroidViewModel {
     public LiveData<List<Book>> getBookList() {
         return bookList;
     }
+
+    public void getBookListByTitle(String title){
+        compositeDisposable.add(api.getBookByTitle(title)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        bookModel -> {
+                            if(bookModel.getStatus() == 200){
+                                bookList.setValue(bookModel.getResult());
+                            }
+                            else {
+                                Log.d("HomeViewModel", bookModel.getMessage());
+                            }
+                        },throwable -> {
+                            Log.d("HomeViewModel", throwable.getMessage());
+                        }
+                ));
+    }
     @Override
     protected void onCleared() {
         super.onCleared();

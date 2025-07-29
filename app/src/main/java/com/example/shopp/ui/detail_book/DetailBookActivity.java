@@ -3,30 +3,44 @@ package com.example.shopp.ui.detail_book;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
 import com.example.shopp.R;
 import com.example.shopp.databinding.ActivityDetailBookBinding;
 import com.example.shopp.model.Book;
+import com.example.shopp.model.Review;
 import com.example.shopp.ui.cart.CartViewModel;
+import com.example.shopp.ui.home.BookAdapter;
+import com.example.shopp.ui.review.ReviewViewModel;
 import com.example.shopp.util.Utils;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class DetailBookActivity extends AppCompatActivity {
 
     private ActivityDetailBookBinding binding;
+    private ReviewViewModel reviewViewModel;
+    private ReviewAdapter reviewAdapter;
+    private BottomSheetBehavior bottomSheetBehavior;
+    private boolean isExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +50,12 @@ public class DetailBookActivity extends AppCompatActivity {
 
         binding = ActivityDetailBookBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        reviewViewModel = new ViewModelProvider(this).get(ReviewViewModel.class);
+
 
         Book book = (Book) getIntent().getSerializableExtra("book");
+
+        reviewViewModel.getReviewByBookId((long) book.getId());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             showDataDetai(book);
@@ -50,6 +68,47 @@ public class DetailBookActivity extends AppCompatActivity {
             }
         });
 
+        reviewViewModel.getReviewList().observe(this, list ->{
+            if(list != null){
+                setReviewAdapter(list);
+            }
+        });
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetReviews);
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_EXPANDED) {
+                    rotateArrow(0f, 180f); // Xoay lên thành xuống
+                    isExpanded = true;
+                } else if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    rotateArrow(180f, 0f); // Xoay xuống thành lên
+                    isExpanded = false;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+
+            }
+        });
+        binding.arrowUpIcon.setOnClickListener(v -> {
+            if (isExpanded) {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            } else {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+            }
+        });
+    }
+
+    private void rotateArrow(float from, float to) {
+        RotateAnimation rotate = new RotateAnimation(
+                from, to,
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(200);
+        rotate.setFillAfter(true); // Giữ trạng thái sau khi xoay
+        binding.arrowUpIcon.startAnimation(rotate);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -68,7 +127,7 @@ public class DetailBookActivity extends AppCompatActivity {
         binding.txtQuantity.setText("Số lượng: "+book.getQuantity());
         binding.txtLanguage.setText("Ngôn ngữ: "+book.getLanguage());
         binding.txtGenre.setText("Thế loại: "+book.getGenre());
-        binding.txtDescription.setText("Mô tả: "+book.getDescription_book());
+        binding.txtDescription.setText(book.getDescription_book());
     }
 
     private void showQuantityBottomSheet(Book book) {
@@ -105,5 +164,11 @@ public class DetailBookActivity extends AppCompatActivity {
         });
 
         bottomSheetDialog.show();
+    }
+
+    public void setReviewAdapter(List<Review> reviews){
+        reviewAdapter = new ReviewAdapter(reviews, getApplicationContext());
+        binding.recyclerViewReviews.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        binding.recyclerViewReviews.setAdapter(reviewAdapter);
     }
 }

@@ -16,6 +16,8 @@ import com.example.shopp.R;
 import com.example.shopp.ui.detail_book.DetailBookActivity;
 import com.example.shopp.interface_click.ItemClickListener;
 import com.example.shopp.model.Book;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -43,12 +45,13 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
         holder.tvAuthor.setText("Tác giả: "+book.getAuthor());
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         holder.tvPrice.setText("Giá: "+decimalFormat.format(Double.parseDouble(String.valueOf(book.getPrice())))+ "Đ");
-        holder.tvDescriptionBook.setText("Mô tả: "+book.getDescription_book());
+
 
         Glide.with(context)
                 .load(book.getImageUrl())
                 .placeholder(R.drawable.ic_android_black_24dp)
                 .error(R.drawable.ic_android_black_24dp)
+                .apply(RequestOptions.bitmapTransform(new RoundedCorners(30))) // 30 = bán kính bo góc (pixel)
                 .into(holder.tvImageUrl);
 
         holder.setItemClickListener((view, pos, isLongClick) -> {
@@ -68,14 +71,13 @@ public class BookAdapter extends RecyclerView.Adapter<BookAdapter.MyViewHolder> 
 
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView tvTitle, tvAuthor, tvPrice,tvDescriptionBook;
+        private TextView tvTitle, tvAuthor, tvPrice;
         private ImageView tvImageUrl;
         private ItemClickListener itemClickListener;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvAuthor = itemView.findViewById(R.id.tvAuthor);
-            tvDescriptionBook = itemView.findViewById(R.id.tvDescriptionBook);
             tvPrice = itemView.findViewById(R.id.tvPrice);
             tvImageUrl = itemView.findViewById(R.id.tvImageUrl);
             itemView.setOnClickListener(v -> {

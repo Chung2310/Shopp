@@ -114,7 +114,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đơn hàng của tôi"
+                    android:text="@string/my_order"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -138,7 +138,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đổi mật khẩu"
+                    android:text="@string/change_password"
                     android:textSize="16sp" />
             </LinearLayout>
 
@@ -162,7 +162,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Đăng xuất"
+                    android:text="@string/log_out"
                     android:textSize="16sp"
                     android:textColor="#FF4444" />
             </LinearLayout>

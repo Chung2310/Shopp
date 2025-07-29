@@ -42,6 +42,7 @@
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
         android:text="Đăng nhập"
+        android:background="@drawable/gb_bottom_orange"
         android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

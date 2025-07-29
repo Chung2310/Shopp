@@ -1,68 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:layout_marginTop="10dp"
-    tools:context=".ui.cart.CartFragment">
-    <TextView
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:text="Giỏ Hàng"
-        android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/chat_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="?attr/actionBarSize"
+        android:background="#FF5722"
+        android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
+        app:title="@string/cart"
+        app:navigationIcon="@drawable/grocerystore" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
-        android:id="@+id/recycleViewCart"
+        android:id="@+id/recyclerCart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <!-- Tổng tiền và thanh toán -->
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="12dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@drawable/bg_bottom_sheet"
+        android:gravity="center_vertical">
 
-        <!-- Tổng tiền -->
-        <LinearLayout
-
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:padding="8dp">
+            android:textColor="#FF0000"
+            android:layout_weight="0.4"
+            android:text="@string/price"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvTongTienLabel"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Tổng tiền:"
-                android:textSize="16sp"
-                android:textColor="#FF0000" />
+        <TextView
+            android:id="@+id/tvTotalPrice"
+            android:layout_width="0dp"
+            android:layout_marginLeft="10dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:textColor="#FF0000"
+            android:layout_weight="1"
+            android:text="Giá: $0.00"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvTongTien"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 đ"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#FF0000" />
-        </LinearLayout>
-
-        <!-- Nút thanh toán -->
-        <Button
-            android:id="@+id/btnThanhToan"
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnCheckout"
+            android:layout_width="wrap_content"
+            android:textColor="@color/white"
+            android:background="@drawable/gb_bottom_orange"
             android:layout_height="wrap_content"
-            android:text="Tiến hành thanh toán"
-            android:backgroundTint="@color/black"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:layout_margin="8dp" />
+            android:text="@string/purchase" />
+
     </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/bottom_nav_menu" />
 </LinearLayout>

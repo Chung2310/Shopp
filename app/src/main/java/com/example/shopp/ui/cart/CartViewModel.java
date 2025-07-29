@@ -1,16 +1,16 @@
 package com.example.shopp.ui.cart;
 
 import android.app.Application;
-import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.shopp.model.CartItem;
 import com.example.shopp.model.CartItemRequest;
+import com.example.shopp.model.OrderDetail;
+import com.example.shopp.model.PurchaseRequest;
 import com.example.shopp.retrofit.Api;
 import com.example.shopp.retrofit.RetrofitClient;
 import com.example.shopp.util.Utils;
@@ -126,6 +126,24 @@ public class CartViewModel extends AndroidViewModel {
                         },
                         throwable -> {
                             Log.e("CartViewModel", "Lỗi thêm giỏ hàng: " + throwable.getMessage());
+                        }
+                ));
+    }
+
+    public void createOrder(PurchaseRequest purchaseRequest){
+        compositeDisposable.add(api.createOrder(purchaseRequest)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        messageModel -> {
+                            if (messageModel.getStatus() == 201){
+                                Log.d("CartViewModel",messageModel.getMessage());
+                            }
+                            else {
+                                Log.d("CartViewModel",messageModel.getMessage());
+                            }
+                        },throwable -> {
+                            Log.d("CartViewModel",throwable.getMessage());
                         }
                 ));
     }

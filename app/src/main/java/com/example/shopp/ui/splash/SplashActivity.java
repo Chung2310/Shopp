@@ -12,6 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
 
@@ -23,6 +24,7 @@ import com.example.shopp.model.User;
 import com.example.shopp.retrofit.Api;
 import com.example.shopp.retrofit.RetrofitClient;
 import com.example.shopp.ui.login.LoginActivity;
+import com.example.shopp.ui.login.LoginViewModel;
 import com.example.shopp.util.NetworkUtils;
 import com.example.shopp.util.Utils;
 import com.google.gson.Gson;
@@ -50,11 +52,8 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 public class SplashActivity extends AppCompatActivity {
 
     private ActivitySplashBinding binding;
-    private Api apiService;
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private SharedPreferences securePrefs;
-
-    // Phải giống với backend JwtTokenProvider.java
+    private SplashViewModel viewModel;
     private static final String SECRET_KEY = "jT7ZqF9YpLwXyKmBp9rQvUs4EzCeRgThJnAoSdFgHiJkLmNoPqRsTuVwXyZaBcDe";
 
     @Override
@@ -63,7 +62,7 @@ public class SplashActivity extends AppCompatActivity {
         binding = ActivitySplashBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        apiService = RetrofitClient.getInstance(Utils.BASE_URL, getApplicationContext()).create(Api.class);
+        viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(SplashViewModel.class);
 
         try {
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
@@ -100,45 +99,58 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void handleTokenCheck() {
-        SharedPreferences securePrefs = getApplicationContext().getSharedPreferences("TokenAuth", Context.MODE_PRIVATE);
+        securePrefs = getApplicationContext().getSharedPreferences("TokenAuth", Context.MODE_PRIVATE);
         String accessToken = securePrefs.getString("token", null);
         String refreshToken = securePrefs.getString("refreshToken", null);
 
-        Log.d("token", accessToken);
+        Log.d("token","accessToken: " + accessToken);
+        Log.d("token","refreshToken: " + refreshToken);
 
         try {
-            if (accessToken != null && isTokenValid(accessToken)) {
+            boolean isAccessTokenValid = accessToken != null && isTokenValid(accessToken);
+            boolean isRefreshTokenValid = refreshToken != null && isTokenValid(refreshToken);
+
+            if (isAccessTokenValid) {
+                Log.d("token", "✅ accessToken hợp lệ, tiếp tục vào app");
 
                 SharedPreferences prefs = getApplication().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
-                String strUser =  prefs.getString("user", null);
 
-                Gson gson = new Gson();
-                User user = gson.fromJson(strUser, User.class);
+                String strUser = prefs.getString("user", null);
 
-                Utils.user = user;
+                Log.d("user", "user: "+ strUser);
 
-                startMainActivity();
+                if (strUser != null) {
+                    User user = new Gson().fromJson(strUser, User.class);
+                    Utils.user = user;
+                }
 
-                return;
-            }
-
-            if (refreshToken != null && isTokenValid(refreshToken)) {
+                // TODO: bạn có thể kiểm tra role tại đây nếu cần
+                 startMainActivity();
+            } else if (isRefreshTokenValid) {
+                Log.d("token", "⚠ accessToken hết hạn, dùng refreshToken để lấy mới");
                 refreshAccessToken(refreshToken, accessToken);
-                return;
+            } else {
+                Log.d("token", "❌ Cả accessToken và refreshToken đều hết hạn, yêu cầu đăng nhập lại");
+                goToLogin();
             }
-
-            goToLogin();
 
         } catch (Exception e) {
-            Log.e(TAG, "Token validation error", e);
+            Log.e("token", "❌ Lỗi khi kiểm tra token: " + e.getMessage());
             goToLogin();
         }
     }
 
+
     private boolean isTokenValid(String token) {
+        Log.d("JWT", "==== Bắt đầu xét token ====");
+        Log.d("JWT", "Token nhận được: " + token);
+
         try {
             byte[] secretKeyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
+            Log.d("JWT", "SECRET_KEY bytes length: " + secretKeyBytes.length);
+
             SecretKey key = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS512.getJcaName());
+            Log.d("JWT", "Đã tạo secret key cho giải mã");
 
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -146,49 +158,47 @@ public class SplashActivity extends AppCompatActivity {
                     .parseClaimsJws(token)
                     .getBody();
 
-            Log.d("JWT", "Token is valid. Subject: " + claims.getSubject());
+            Log.d("JWT", "Giải mã thành công token!");
+            Log.d("JWT", "Subject: " + claims.getSubject());
+            Log.d("JWT", "Issued at: " + claims.getIssuedAt());
+            Log.d("JWT", "Expiration: " + claims.getExpiration());
+            Log.d("JWT", "Roles: " + claims.get("roles")); // Nếu bạn có custom claim
+
+            Log.d("JWT", "==== Token hợp lệ ====");
             return true;
 
-        } catch (SignatureException e) {
-            Log.e("JWT", "Invalid token signature: " + e.getMessage());
         } catch (ExpiredJwtException e) {
-            Log.e("JWT", "Token expired: " + e.getMessage());
-        } catch (MalformedJwtException | IllegalArgumentException e) {
-            Log.e("JWT", "Invalid token: " + e.getMessage());
+            Log.e("JWT", "⚠ Token đã hết hạn: " + e.getMessage());
+            Log.e("JWT", "Expired at: " + e.getClaims().getExpiration());
+        } catch (SignatureException e) {
+            Log.e("JWT", "❌ Chữ ký token không hợp lệ: " + e.getMessage());
+        } catch (MalformedJwtException e) {
+            Log.e("JWT", "❌ Token không đúng định dạng: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            Log.e("JWT", "❌ Token rỗng hoặc không hợp lệ: " + e.getMessage());
         } catch (Exception e) {
-            Log.e("JWT", "Unexpected error validating token: " + e.getMessage());
+            Log.e("JWT", "❌ Lỗi không xác định khi xét token: " + e.getMessage());
         }
+
+        Log.d("JWT", "==== Token không hợp lệ ====");
         return false;
     }
+
 
     private void refreshAccessToken(String refreshToken, String accessToken) {
         RefreshTokenRequest request = new RefreshTokenRequest();
         request.setRefreshToken(refreshToken);
         request.setAccessToken(accessToken);
 
-        compositeDisposable.add(apiService.refresh(request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        accessTokenModel -> {
-                            if (accessTokenModel.getStatus() == 200 && accessTokenModel.getResult() != null) {
-                                securePrefs.edit()
-                                        .putString("token", accessTokenModel.getResult().getAccessToken())
-                                        .putString("refreshToken", accessTokenModel.getResult().getRefreshToken())
-                                        .apply();
-                                Log.d(TAG, "Token refreshed successfully");
-                                startMainActivity();
-                            } else {
-                                Log.w(TAG, "Refresh token failed with status: " + accessTokenModel.getStatus());
-                                goToLogin();
-                            }
-                        },
-                        throwable -> {
-                            Log.e(TAG, "Refresh token error: " + throwable.getMessage(), throwable);
-                            showError("Không thể làm mới phiên đăng nhập");
-                            goToLogin();
-                        }
-                ));
+        viewModel.refreshToken(request);
+
+        viewModel.getRefreshTokenRequestMutableLiveData().observe(this, response -> {
+            if (response != null) {
+                startMainActivity();
+            } else {
+                goToLogin();
+            }
+        });
     }
 
     private void startMainActivity() {
@@ -224,10 +234,6 @@ public class SplashActivity extends AppCompatActivity {
     protected void onDestroy() {
         if (binding.animationView != null) {
             binding.animationView.cancelAnimation();
-        }
-
-        if (compositeDisposable != null && !compositeDisposable.isDisposed()) {
-            compositeDisposable.dispose();
         }
 
         super.onDestroy();

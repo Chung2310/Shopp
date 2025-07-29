@@ -10,8 +10,8 @@
     <ImageView
         android:layout_gravity="center"
         android:id="@+id/tvImageUrl"
-        android:layout_width="100dp"
-        android:layout_height="100dp"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <LinearLayout
         android:layout_marginTop="10dp"
@@ -37,13 +37,5 @@
             android:textColor="#F60000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
-
-        <TextView
-            android:id="@+id/tvDescriptionBook"
-            android:layout_width="match_parent"
-            android:textColor="@color/black"
-            android:layout_height="wrap_content"/>
-
-
     </LinearLayout>
 </LinearLayout>

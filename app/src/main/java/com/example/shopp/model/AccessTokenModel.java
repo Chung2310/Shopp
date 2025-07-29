@@ -3,7 +3,7 @@ package com.example.shopp.model;
 public class AccessTokenModel {
     private int status;
     private String message;
-    private RefreshTokenRequest refreshTokenRequest ;
+    private RefreshTokenRequest result ;
 
     public int getStatus() {
         return status;
@@ -22,10 +22,10 @@ public class AccessTokenModel {
     }
 
     public RefreshTokenRequest getResult() {
-        return refreshTokenRequest;
+        return result;
     }
 
     public void setResult(RefreshTokenRequest result) {
-        this.refreshTokenRequest = result;
+        this.result = result;
     }
 }

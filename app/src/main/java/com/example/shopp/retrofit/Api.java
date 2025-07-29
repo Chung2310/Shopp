@@ -5,23 +5,26 @@ import com.example.shopp.model.BookModel;
 import com.example.shopp.model.CartItemRequest;
 import com.example.shopp.model.CartModel;
 import com.example.shopp.model.ChangePasswordRequest;
+import com.example.shopp.model.ChechReviewedModel;
 import com.example.shopp.model.ImageModel;
 import com.example.shopp.model.LoginRequest;
 import com.example.shopp.model.MessageModel;
+import com.example.shopp.model.OrderModel;
+import com.example.shopp.model.PurchaseRequest;
 import com.example.shopp.model.RefreshTokenRequest;
 import com.example.shopp.model.RegisterRequest;
+import com.example.shopp.model.Review;
+import com.example.shopp.model.ReviewModel;
 import com.example.shopp.model.UserModel;
 import com.example.shopp.model.UserUpdateRequest;
 
-import java.util.Map;
+import java.util.List;
 
 import io.reactivex.rxjava3.core.Observable;
 import okhttp3.MultipartBody;
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -33,8 +36,10 @@ import retrofit2.http.Query;
 public interface Api {
 
     @GET("book")
-    Observable<BookModel> getAllBook(
-    );
+    Observable<BookModel> getAllBook();
+
+    @GET("book/{bookId}")
+    Observable<BookModel> getBookById(@Path("bookId") Long bookId);
 
     @GET("cart/{userId}")
     Observable<CartModel> getCartByUserId(@Path("userId") int userId);
@@ -58,16 +63,45 @@ public interface Api {
     @POST("auth/register")
     Observable<UserModel> register(@Body RegisterRequest registerRequest);
 
-    @POST("auth/refresh")
+    @POST("auth/refreshToken")
     Observable<AccessTokenModel> refresh(@Body RefreshTokenRequest request);
 
-    @POST("auth/update")
+    @POST("user/update")
     Observable<UserModel> updateUser(@Body UserUpdateRequest userUpdateRequest);
 
-    @POST("auth/changePassword")
+    @POST("user/changePass")
     Observable<MessageModel> changePassword(@Body ChangePasswordRequest changePasswordRequest);
 
     @Multipart
-    @POST("auth/uploadAvatar/{userId}")
-    Observable<ImageModel> uploadImage(@Path("userId") int id,@Query("mode") String mode ,@Part MultipartBody.Part image);
+    @POST("user/uploadImage/{userId}")
+    Observable<ImageModel> uploadImage(
+            @Path("userId") int id,
+            @Query("mode") String mode,
+            @Part MultipartBody.Part image
+    );
+
+    @GET("book/title")
+    Observable<BookModel> getBookByTitle(@Query("title") String title);
+
+    @GET("order/{userId}")
+    Observable<OrderModel> getOrderByUserId(@Path("userId") Long id);
+
+    @POST("order")
+    Observable<MessageModel> createOrder(@Body PurchaseRequest purchaseRequest);
+
+    @POST("review")
+    Observable<ReviewModel> createReview(@Body Review review);
+
+    @GET("review/book/{id}")
+    Observable<ReviewModel> getReviewByBookId(@Path("id") Long bookId);
+
+    @GET("review/user/{id}")
+    Observable<ReviewModel> getReviewByUserId(@Path("id") Long userId);
+
+    @POST("review/checkReviewed/{userId}")
+    Observable<ChechReviewedModel> checkReviewed(
+            @Path("userId") Long userId,
+            @Body List<Long> bookId
+    );
+
 }

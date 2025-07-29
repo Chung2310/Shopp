@@ -1,7 +1,5 @@
 package com.example.shopp.ui.cart;
 
-import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.shopp.R;
-import com.example.shopp.interface_click.ItemClickListener;
 import com.example.shopp.model.CartItem;
+import com.example.shopp.model.OrderDetail;
 
 import java.text.DecimalFormat;
 import java.util.List;
