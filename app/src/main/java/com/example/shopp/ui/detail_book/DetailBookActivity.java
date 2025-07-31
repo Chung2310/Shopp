@@ -15,7 +15,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.bumptech.glide.Glide;
@@ -23,8 +22,11 @@ import com.example.shopp.R;
 import com.example.shopp.databinding.ActivityDetailBookBinding;
 import com.example.shopp.model.Book;
 import com.example.shopp.model.Review;
+import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.ui.cart.CartViewModel;
-import com.example.shopp.ui.home.BookAdapter;
+import com.example.shopp.ui.review.ReviewAdapter;
+import com.example.shopp.ui.review.ReviewLikeViewModel;
 import com.example.shopp.ui.review.ReviewViewModel;
 import com.example.shopp.util.Utils;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -32,6 +34,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class DetailBookActivity extends AppCompatActivity {
@@ -40,6 +43,9 @@ public class DetailBookActivity extends AppCompatActivity {
     private ReviewViewModel reviewViewModel;
     private ReviewAdapter reviewAdapter;
     private BottomSheetBehavior bottomSheetBehavior;
+    private ReviewLikeViewModel reviewLikeViewModel;
+    private UserRepository userRepository;
+    private User user;
     private boolean isExpanded = false;
 
     @Override
@@ -51,7 +57,10 @@ public class DetailBookActivity extends AppCompatActivity {
         binding = ActivityDetailBookBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         reviewViewModel = new ViewModelProvider(this).get(ReviewViewModel.class);
+        reviewLikeViewModel = new ViewModelProvider(this).get(ReviewLikeViewModel.class);
 
+        userRepository = new UserRepository(getApplicationContext());
+        user = userRepository.getUser();
 
         Book book = (Book) getIntent().getSerializableExtra("book");
 
@@ -121,7 +130,9 @@ public class DetailBookActivity extends AppCompatActivity {
         binding.txtAuthor.setText("Tác giả: " + book.getAuthor());
         binding.txtPublisher.setText("Nhà xuất bản: " + book.getPublisher());
         LocalDateTime dateTime = LocalDateTime.parse(book.getPublishedDate());
-        binding.txtPublishedDate.setText("Năm xuất bản: "+ dateTime.toLocalDate().toString());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDate = dateTime.toLocalDate().format(formatter);
+        binding.txtPublishedDate.setText("Năm xuất bản: " + formattedDate);
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         binding.txtPrice.setText("Giá: "+decimalFormat.format(Double.parseDouble(String.valueOf(book.getPrice())))+ "Đ");
         binding.txtQuantity.setText("Số lượng: "+book.getQuantity());
@@ -158,7 +169,7 @@ public class DetailBookActivity extends AppCompatActivity {
 
             CartViewModel cartViewModel = new ViewModelProvider(this).get(CartViewModel.class);
 
-            cartViewModel.addToCart( Utils.user.getId(),book.getId(),quantity);
+            cartViewModel.addToCart( user.getId(),book.getId(),quantity);
 
             bottomSheetDialog.dismiss();
         });
@@ -167,7 +178,12 @@ public class DetailBookActivity extends AppCompatActivity {
     }
 
     public void setReviewAdapter(List<Review> reviews){
-        reviewAdapter = new ReviewAdapter(reviews, getApplicationContext());
+        reviewAdapter = new ReviewAdapter(reviews, getApplicationContext(), new ReviewAdapter.OnReviewLikeListener() {
+            @Override
+            public void onLikeClicked(Long reviewId) {
+                reviewLikeViewModel.toggleLike((long) user.getId(),reviewId);
+            }
+        });
         binding.recyclerViewReviews.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         binding.recyclerViewReviews.setAdapter(reviewAdapter);
     }

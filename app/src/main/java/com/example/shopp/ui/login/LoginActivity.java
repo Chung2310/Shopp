@@ -16,13 +16,18 @@ import com.example.shopp.activity.MainActivity;
 import com.example.shopp.databinding.ActivityLoginBinding;
 import com.example.shopp.model.LoginRequest;
 import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
+import com.example.shopp.ui.admin.AdminActivity;
 import com.example.shopp.ui.register.RegisterActivity;
 import com.example.shopp.util.Utils;
 import com.google.gson.Gson;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
     private ActivityLoginBinding binding;
     private LoginViewModel viewModel;
+    private UserRepository userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +38,27 @@ public class LoginActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(LoginViewModel.class);
 
+        userRepository = new UserRepository(getApplicationContext());
+
+        viewModel.getMsg().observe(this, msg -> {
+            if(msg != null){
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+            }
+
+        });
+
         viewModel.getUserLiveData().observe(this, user -> {
             if (user == null) {
-                Toast.makeText(getApplicationContext(), "Đăng nhập thất bại!", Toast.LENGTH_SHORT).show();
+                return;
             } else {
                 Toast.makeText(getApplicationContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                 Log.d("LoginActivity", "User ID: " + user.getId());
 
-                Utils.user = user;
+                userRepository.saveUser(user);
 
-                Gson gson = new Gson();
-                String strUser =  gson.toJson(user);
-
-                Log.d("user",strUser);
-
-                SharedPreferences prefs = getApplication().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
-                prefs.edit().putString("user", strUser).apply();
-
-                if(user.getRole() == "ADMIN"){
-
+                if(Objects.equals(user.getRole(), "ADMIN")){
+                    Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+                    startActivity(intent);
                 }
                 else {
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);

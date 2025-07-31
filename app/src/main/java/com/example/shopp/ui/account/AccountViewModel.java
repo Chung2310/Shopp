@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.shopp.model.ChangePasswordRequest;
 import com.example.shopp.model.User;
 import com.example.shopp.model.UserUpdateRequest;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.retrofit.Api;
 import com.example.shopp.retrofit.RetrofitClient;
 import com.example.shopp.util.Utils;
@@ -40,11 +41,15 @@ public class AccountViewModel extends AndroidViewModel {
     private final MutableLiveData<User> userMutableLiveData = new MutableLiveData<>();
     private final MutableLiveData<String> uploadResult = new MutableLiveData<>();
     private Api api;
+    private UserRepository userRepository;
+    private User user;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public AccountViewModel(@NotNull Application application) {
         super(application);
         api = RetrofitClient.getInstance(Utils.BASE_URL,application).create(Api.class);
+        userRepository = new UserRepository(application);
+        user = userRepository.getUser();
     }
 
     public void updateUser(Long id,String name, String phone, String address){
@@ -56,14 +61,7 @@ public class AccountViewModel extends AndroidViewModel {
                 .subscribe(
                         userModel -> {
                             if(userModel.getStatus() == 200){
-                                Utils.user = userModel.getResult();
-                                Gson gson = new Gson();
-                                String strUser =  gson.toJson(userModel.getResult());
-
-                                Log.d("user",strUser);
-
-                                SharedPreferences prefs = getApplication().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
-                                prefs.edit().putString("user", strUser).apply();
+                                userRepository.saveUser(userModel.getResult());
                             } else {
                                 Log.d("AccountViewModel",userModel.getMessage());
                             }
@@ -104,25 +102,19 @@ public class AccountViewModel extends AndroidViewModel {
         RequestBody requestFile = RequestBody.create(MediaType.parse(currentUploadMode+"/*"), file);
         MultipartBody.Part body = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
 
-        compositeDisposable.add(api.uploadImage(Utils.user.getId(), currentUploadMode, body)
+        compositeDisposable.add(api.uploadImage(user.getId(), currentUploadMode, body)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         imageModel -> {
                             if(imageModel.getStatus() == 200){
                                 if(currentUploadMode == "avatar"){
-                                    Utils.user.setAvatarUrl(imageModel.getResult());
+                                    user.setAvatarUrl(imageModel.getResult());
                                 }
                                 else {
-                                    Utils.user.setBackgroundUrl(imageModel.getResult());
+                                    user.setBackgroundUrl(imageModel.getResult());
                                 }
-                                Gson gson = new Gson();
-                                String strUser =  gson.toJson(Utils.user);
-
-                                Log.d("user",strUser);
-
-                                SharedPreferences prefs = getApplication().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
-                                prefs.edit().putString("user", strUser).apply();
+                                userRepository.saveUser(user);
                             }
                             else {
                                 Log.d("AccoutViewModel",imageModel.getMessage());

@@ -11,6 +11,8 @@ import com.example.shopp.model.CartItem;
 import com.example.shopp.model.CartItemRequest;
 import com.example.shopp.model.OrderDetail;
 import com.example.shopp.model.PurchaseRequest;
+import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.retrofit.Api;
 import com.example.shopp.retrofit.RetrofitClient;
 import com.example.shopp.util.Utils;
@@ -28,11 +30,14 @@ public class CartViewModel extends AndroidViewModel {
    private final MutableLiveData<List<CartItem>> cartList = new MutableLiveData<>(new ArrayList<>());
    private CompositeDisposable compositeDisposable = new CompositeDisposable();
    private Api api;
+   private UserRepository userRepository;
+   private User user;
 
     public CartViewModel(@NotNull Application application) {
         super(application);
         api = RetrofitClient.getInstance(Utils.BASE_URL, application ).create(Api.class);
-        getCart(Utils.user.getId());
+        user = userRepository.getUser();
+        getCart(user.getId());
     }
 
     public LiveData<List<CartItem>> getCartList(){

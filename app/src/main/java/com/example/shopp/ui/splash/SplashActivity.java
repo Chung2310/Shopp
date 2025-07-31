@@ -21,8 +21,10 @@ import com.example.shopp.activity.MainActivity;
 import com.example.shopp.databinding.ActivitySplashBinding;
 import com.example.shopp.model.RefreshTokenRequest;
 import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.retrofit.Api;
 import com.example.shopp.retrofit.RetrofitClient;
+import com.example.shopp.ui.admin.AdminActivity;
 import com.example.shopp.ui.login.LoginActivity;
 import com.example.shopp.ui.login.LoginViewModel;
 import com.example.shopp.util.NetworkUtils;
@@ -54,6 +56,7 @@ public class SplashActivity extends AppCompatActivity {
     private ActivitySplashBinding binding;
     private SharedPreferences securePrefs;
     private SplashViewModel viewModel;
+    private UserRepository userRepository;
     private static final String SECRET_KEY = "jT7ZqF9YpLwXyKmBp9rQvUs4EzCeRgThJnAoSdFgHiJkLmNoPqRsTuVwXyZaBcDe";
 
     @Override
@@ -63,6 +66,8 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(SplashViewModel.class);
+
+        userRepository = new UserRepository(getApplicationContext());
 
         try {
             String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
@@ -113,19 +118,16 @@ public class SplashActivity extends AppCompatActivity {
             if (isAccessTokenValid) {
                 Log.d("token", "✅ accessToken hợp lệ, tiếp tục vào app");
 
-                SharedPreferences prefs = getApplication().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
+                User user = userRepository.getUser();
 
-                String strUser = prefs.getString("user", null);
-
-                Log.d("user", "user: "+ strUser);
-
-                if (strUser != null) {
-                    User user = new Gson().fromJson(strUser, User.class);
-                    Utils.user = user;
+                if (user != null) {
+                    if(user.getRole() == "ADMIN"){
+                        Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
+                        startActivity(intent);
+                    }
+                    startMainActivity();
                 }
 
-                // TODO: bạn có thể kiểm tra role tại đây nếu cần
-                 startMainActivity();
             } else if (isRefreshTokenValid) {
                 Log.d("token", "⚠ accessToken hết hạn, dùng refreshToken để lấy mới");
                 refreshAccessToken(refreshToken, accessToken);

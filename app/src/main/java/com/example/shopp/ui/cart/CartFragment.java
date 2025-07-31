@@ -22,6 +22,8 @@ import com.example.shopp.databinding.FragmentCartBinding;
 import com.example.shopp.model.CartItem;
 import com.example.shopp.model.OrderDetail;
 import com.example.shopp.model.PurchaseRequest;
+import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.ui.account.AccountFragment;
 import com.example.shopp.ui.order.OrderActivity;
 import com.example.shopp.util.Utils;
@@ -39,6 +41,8 @@ public class CartFragment extends Fragment {
     private FragmentCartBinding binding;
     private CartAdapter adapter;
     private int total;
+    private UserRepository userRepository;
+    private User user;
     private List<PurchaseRequest.OrderItem> items;
 
     public static CartFragment newInstance() {
@@ -59,17 +63,20 @@ public class CartFragment extends Fragment {
         // ViewModel
         mViewModel = new ViewModelProvider(this).get(CartViewModel.class);
 
+        userRepository = new UserRepository(getContext());
+        user = userRepository.getUser();
+
         // Setup RecyclerView
-        adapter = new CartAdapter(new ArrayList<>(), new CartAdapter.OnCartActionListener() {
+        adapter = new CartAdapter( getContext(),new ArrayList<>(), new CartAdapter.OnCartActionListener() {
             @Override
             public void onQuantityChanged(CartItem item, int newQuantity) {
-                mViewModel.updateQuantity(Utils.user.getId(), item.getBook().getId(), newQuantity);
+                mViewModel.updateQuantity(user.getId(), item.getBook().getId(), newQuantity);
                 updateTotalPrice();
             }
 
             @Override
             public void onItemDeleted(CartItem item) {
-                mViewModel.deleteCartItem((long) Utils.user.getId(), (long) item.getBook().getId());
+                mViewModel.deleteCartItem((long) user.getId(), (long) item.getBook().getId());
                 updateTotalPrice();
             }
         });
@@ -132,7 +139,7 @@ public class CartFragment extends Fragment {
                         return;
                     }
                     PurchaseRequest purchaseRequest = new PurchaseRequest(
-                            (long)Utils.user.getId(),
+                            (long) user.getId(),
                             etAddress.getText().toString(),
                             etPhone.getText().toString(),
                             etDescription.getText().toString(),

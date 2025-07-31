@@ -1,5 +1,7 @@
 package com.example.shopp.ui.cart;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.example.shopp.R;
 import com.example.shopp.model.CartItem;
 import com.example.shopp.model.OrderDetail;
+import com.example.shopp.ui.detail_book.DetailBookActivity;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -21,6 +24,7 @@ import java.util.List;
 public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
     private List<CartItem> cartItems;
     private OnCartActionListener listener;
+    private Context context;
 
     public interface OnCartActionListener {
         void onQuantityChanged(CartItem item, int newQuantity);
@@ -36,9 +40,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
         return cartItems;
     }
 
-    public CartAdapter( List<CartItem> cartItems, OnCartActionListener listener) {
+    public CartAdapter(Context context, List<CartItem> cartItems, OnCartActionListener listener) {
         this.listener = listener;
         this.cartItems = cartItems;
+        this.context = context;
     }
 
     @NonNull
@@ -84,6 +89,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder
                 listener.onItemDeleted(item);
                 notifyDataSetChanged();
 
+            }
+        });
+
+        holder.imgBook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailBookActivity.class);
+                intent.putExtra("book",item.getBook());
+                holder.itemView.getContext().startActivity(intent);
             }
         });
     }

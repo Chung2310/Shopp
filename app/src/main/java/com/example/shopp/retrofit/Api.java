@@ -2,12 +2,14 @@ package com.example.shopp.retrofit;
 
 import com.example.shopp.model.AccessTokenModel;
 import com.example.shopp.model.BookModel;
+import com.example.shopp.model.BooleanMessage;
 import com.example.shopp.model.CartItemRequest;
 import com.example.shopp.model.CartModel;
 import com.example.shopp.model.ChangePasswordRequest;
 import com.example.shopp.model.ChechReviewedModel;
 import com.example.shopp.model.ImageModel;
 import com.example.shopp.model.LoginRequest;
+import com.example.shopp.model.LongModel;
 import com.example.shopp.model.MessageModel;
 import com.example.shopp.model.OrderModel;
 import com.example.shopp.model.PurchaseRequest;
@@ -15,6 +17,7 @@ import com.example.shopp.model.RefreshTokenRequest;
 import com.example.shopp.model.RegisterRequest;
 import com.example.shopp.model.Review;
 import com.example.shopp.model.ReviewModel;
+import com.example.shopp.model.UserAdminModel;
 import com.example.shopp.model.UserModel;
 import com.example.shopp.model.UserUpdateRequest;
 
@@ -104,4 +107,21 @@ public interface Api {
             @Body List<Long> bookId
     );
 
+    @DELETE("review/{id}")
+    Observable<MessageModel> deleteReviewById(@Path("id") Long id);
+
+    @POST("review/update")
+    Observable<ReviewModel> updateReviewById(@Body Review review);
+
+    @GET("admin/users")
+    Observable<UserAdminModel> getAllUserAdmin();
+
+    @PUT("admin/user/role/{id}")
+    Observable<MessageModel> setRoleAdminByUserId(@Path("id") Long id);
+
+    @POST("reviewLike")
+    Observable<BooleanMessage> toggleLike(@Query("userId") Long userId, @Query("reviewId") Long reviewId);
+
+    @PUT("reviewLike")
+    Observable<LongModel> getLikeCount(@Query("reviewId") Long reviewId);
 }

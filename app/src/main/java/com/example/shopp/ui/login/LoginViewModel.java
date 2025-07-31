@@ -31,6 +31,7 @@ public class LoginViewModel extends AndroidViewModel {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
     private final Api api;
     private final MutableLiveData<User> userLiveData = new MutableLiveData<>();
+    private MutableLiveData<String> msg = new MutableLiveData<>();
 
     public LoginViewModel(@NotNull Application application) {
         super(application);
@@ -39,6 +40,10 @@ public class LoginViewModel extends AndroidViewModel {
 
     public MutableLiveData<User> getUserLiveData() {
         return userLiveData;
+    }
+
+    public MutableLiveData<String> getMsg() {
+        return msg;
     }
 
     public void login(String email, String password, Context context) {
@@ -52,6 +57,7 @@ public class LoginViewModel extends AndroidViewModel {
                 .subscribe(
                         userModel -> {
                             if (userModel.getStatus() == 200) {
+                                msg.setValue(userModel.getMessage());
                                 userLiveData.setValue(userModel.getResult());
                                 SharedPreferences prefs = context.getSharedPreferences("TokenAuth", Context.MODE_PRIVATE);
                                 prefs.edit().putString("token", userModel.getResult().getToken()).apply();
@@ -61,6 +67,7 @@ public class LoginViewModel extends AndroidViewModel {
                             } else
                             if (userModel.getStatus() == 401)
                             {
+                                msg.setValue(userModel.getMessage());
                                 userLiveData.setValue(null);
                             }
                         },

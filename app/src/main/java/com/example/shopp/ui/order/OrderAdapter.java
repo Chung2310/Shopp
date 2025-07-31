@@ -4,6 +4,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.example.shopp.model.Order;
 import com.example.shopp.ui.review.ReviewActivity;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +54,12 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         Order order = orderList.get(position);
 
         holder.tvOrderId.setText("Mã đơn hàng: "+order.getId());
-        holder.tvDate.setText("Ngày đặt hàng: " + order.getCreatedAt());
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            holder.tvDate.setText("Ngày đặt hàng: " + getTimeAgo(order.getCreatedAt()));
+        }
+        else {
+            holder.tvDate.setText("Ngày đặt hàng: " + order.getCreatedAt());
+        }
         holder.tvPhone.setText("Số điện thoai: "+order.getPhone());
         holder.tvAddress.setText("Địa chỉ: "+order.getAddress());
         holder.tvDescription.setText("Chú thích: "+order.getDescription());
@@ -95,6 +103,37 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             btnReview = itemView.findViewById(R.id.btnReview);
         }
 
+    }
+    public static String getTimeAgo(String timeStr) {
+        LocalDateTime postTime = null;
+        LocalDateTime now;
+        long seconds = 0;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            postTime = LocalDateTime.parse(timeStr);
+            now = LocalDateTime.now();
+
+            Duration duration = Duration.between(postTime, now);
+
+            seconds = duration.getSeconds();
+        }
+
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        long months = days / 30;
+
+        if (seconds < 60) {
+            return "vừa xong";
+        } else if (minutes < 60) {
+            return minutes + " phút trước";
+        } else if (hours < 24) {
+            return hours + " giờ trước";
+        } else if (days < 30) {
+            return days + " ngày trước";
+        } else {
+            return months + " tháng trước";
+        }
     }
 }
 

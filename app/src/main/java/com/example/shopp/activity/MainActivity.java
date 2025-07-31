@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.shopp.R;
+import com.example.shopp.databinding.ActivityMainBinding;
 import com.example.shopp.ui.account.AccountFragment;
 import com.example.shopp.ui.cart.CartFragment;
 import com.example.shopp.ui.chat.ChatFragment;
@@ -15,20 +16,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
 public class MainActivity extends AppCompatActivity {
-    BottomNavigationView bottomNavigationView;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        anhXa();
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        setContentView(binding.getRoot());
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new HomeFragment())
                 .commit();
 
-        bottomNavigationView.setOnItemSelectedListener(item -> {
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
 
             int id = item.getItemId();
@@ -53,10 +55,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-    }
-
-    public void anhXa(){
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
 }

@@ -1,12 +1,32 @@
 package com.example.shopp.model;
 
-public class Review {
+import java.io.Serializable;
+
+public class Review implements Serializable {
     private Long id;
     private User userDTO;
     private Book bookDTO;
     private int rating;
     private String comments;
     private String createdAt;
+    private boolean likedByCurrentUser;
+    private int likeCount;
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public boolean isLikedByCurrentUser() {
+        return likedByCurrentUser;
+    }
+
+    public void setLikedByCurrentUser(boolean likedByCurrentUser) {
+        this.likedByCurrentUser = likedByCurrentUser;
+    }
 
     public Long getId() {
         return id;

@@ -1,6 +1,8 @@
 package com.example.shopp.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     private int id;
     private String email;
     private String fullName;
@@ -11,6 +13,21 @@ public class User {
     private String role;
     private String token;
     private String refreshToken;
+
+    public User() {}
+
+    public User(int id, String email, String fullName, String phone, String address, String avatarUrl, String backgroundUrl, String role, String token, String refreshToken) {
+        this.id = id;
+        this.email = email;
+        this.fullName = fullName;
+        this.phone = phone;
+        this.address = address;
+        this.avatarUrl = avatarUrl;
+        this.backgroundUrl = backgroundUrl;
+        this.role = role;
+        this.token = token;
+        this.refreshToken = refreshToken;
+    }
 
     public String getRefreshToken() {
         return refreshToken;

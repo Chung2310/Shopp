@@ -22,6 +22,7 @@ public class ReviewViewModel extends AndroidViewModel {
     private MutableLiveData<List<Review>> reviewList = new MutableLiveData<>();
     private MutableLiveData<List<Long>> bookListId = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private MutableLiveData<String> msg = new MutableLiveData<>();
     private Api api;
 
     public ReviewViewModel(@NonNull Application application) {
@@ -35,6 +36,10 @@ public class ReviewViewModel extends AndroidViewModel {
 
     public MutableLiveData<List<Long>> getBookListId() {
         return bookListId;
+    }
+
+    public MutableLiveData<String> getMsg() {
+        return msg;
     }
 
     public void createReview(Review review){
@@ -109,6 +114,42 @@ public class ReviewViewModel extends AndroidViewModel {
                         },
                         throwable ->{
                             Log.d("ReviewModel", throwable.getMessage());
+                        }
+                ));
+    }
+
+    public void deleteReviewById(Long reviewId){
+        compositeDisposable.add(api.deleteReviewById(reviewId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        messageModel -> {
+                            if(messageModel.getStatus() == 200){
+                                msg.setValue(messageModel.getMessage());
+                            }
+                            else {
+                                msg.setValue(messageModel.getMessage());
+                            }
+                        }, throwable -> {
+                            Log.d("ReviewViewModel", throwable.getMessage());
+                        }
+                ));
+    }
+
+    public void updateReviewById(Review review){
+        compositeDisposable.add(api.updateReviewById(review)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        reviewModel -> {
+                            if(reviewModel.getStatus() == 200){
+                                reviewList.setValue(reviewModel.getResult());
+                            }
+                            else {
+                                Log.d("ReviewViewModel", reviewModel.getMessage());
+                            }
+                        },throwable -> {
+                            Log.d("ReviewViewModel", throwable.getMessage());
                         }
                 ));
     }

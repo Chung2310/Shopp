@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.shopp.R;
 import com.example.shopp.databinding.ActivityOrderBinding;
+import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.util.Utils;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ public class OrderActivity extends AppCompatActivity {
     private ActivityOrderBinding binding;
 
     private OrderViewModel orderViewModel;
+    private UserRepository userRepository;
+    private User user;
     private OrderAdapter orderAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,9 @@ public class OrderActivity extends AppCompatActivity {
             return insets;
         });
 
+        userRepository = new UserRepository(getApplicationContext());
+        user = userRepository.getUser();
+
         actionToolBar();
 
         orderViewModel = new ViewModelProvider(this).get(OrderViewModel.class);
@@ -44,7 +51,7 @@ public class OrderActivity extends AppCompatActivity {
         binding.recyclerOrder.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerOrder.setAdapter(orderAdapter);
 
-        orderViewModel.getOrderByUserId((long) Utils.user.getId());
+        orderViewModel.getOrderByUserId((long) user.getId());
 
         orderViewModel.getOrderListLiveData().observe(this, orders -> {
             if (orders != null) {

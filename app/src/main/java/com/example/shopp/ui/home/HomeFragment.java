@@ -65,8 +65,6 @@ public class HomeFragment extends Fragment {
             setBookAdapter();
         });
 
-        Log.d("HomeFragment", Utils.user.getEmail());
-
         String[] banners = {
                 "https://thietkelogo.edu.vn/uploads/images/thiet-ke-do-hoa-khac/banner-sach/3.jpg",
                 "https://thietkelogo.edu.vn/uploads/images/thiet-ke-do-hoa-khac/banner-sach/11.png",

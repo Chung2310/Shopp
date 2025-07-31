@@ -29,8 +29,11 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.shopp.R;
 import com.example.shopp.databinding.FragmentAccountBinding;
+import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.ui.login.LoginActivity;
 import com.example.shopp.ui.order.OrderActivity;
+import com.example.shopp.ui.review.HistoryReviewActivity;
 import com.example.shopp.util.Utils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.textfield.TextInputEditText;
@@ -45,6 +48,8 @@ public class AccountFragment extends Fragment {
     private static final int REQUEST_CODE_PICK_IMAGE = 1001;
 
     private String currentUploadMode = "";
+    private UserRepository userRepository;
+    private User user;
 
     public static AccountFragment newInstance() {
         return new AccountFragment();
@@ -57,7 +62,8 @@ public class AccountFragment extends Fragment {
         View root = binding.getRoot();
 
         viewModel = new ViewModelProvider(this).get(AccountViewModel.class);
-
+        userRepository = new UserRepository(getContext());
+        user = userRepository.getUser();
         return root;
     }
 
@@ -103,6 +109,14 @@ public class AccountFragment extends Fragment {
             }
         });
 
+        binding.layoutHistoryReviews.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), HistoryReviewActivity.class);
+                startActivity(intent);
+            }
+        });
+
         binding.layoutChangePassword.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,8 +131,7 @@ public class AccountFragment extends Fragment {
                         .setTitle("Xác nhận đăng xuất")
                         .setMessage("Bạn có chắc chắn muốn đăng xuất không?")
                         .setPositiveButton("Đăng xuất", (dialog, which) -> {
-                            SharedPreferences prefs = getContext().getSharedPreferences("UserAuth", Context.MODE_PRIVATE);
-                            prefs.edit().putString("user", "").apply();
+                            userRepository.clearUser();
                             SharedPreferences prefsUser = getContext().getSharedPreferences("TokenAuth", Context.MODE_PRIVATE);
                             prefsUser.edit().putString("token", "").apply();
                             prefsUser.edit().putString("refreshToken", "").apply();
@@ -134,28 +147,28 @@ public class AccountFragment extends Fragment {
     }
 
     public void showDataUser(){
-        binding.tvEmail.setText(Utils.user.getEmail());
-        binding.tvFullName.setText(Utils.user.getFullName());
+        binding.tvEmail.setText(user.getEmail());
+        binding.tvFullName.setText(user.getFullName());
 
         String newUrl = Utils.BASE_URL.replace("/api/", "/");
 
         String postBackgroundUrl,postAvatarUrl;
 
-        if(Utils.user.getAvatarUrl() == null){
+        if(user.getAvatarUrl() == null){
             return;
         }
         else {
-            postAvatarUrl = Utils.user.getAvatarUrl().contains("https") ?
-                    Utils.user.getAvatarUrl() : newUrl + "avatar/" + Utils.user.getAvatarUrl();
+            postAvatarUrl = user.getAvatarUrl().contains("https") ?
+                    user.getAvatarUrl() : newUrl + "avatar/" + user.getAvatarUrl();
             Log.d("AvatarUrl",postAvatarUrl);
         }
-        if(Utils.user.getBackgroundUrl() == null)
+        if(user.getBackgroundUrl() == null)
         {
             return;
         }
         else {
-            postBackgroundUrl = Utils.user.getBackgroundUrl().contains("https") ?
-                    Utils.user.getBackgroundUrl() : newUrl + "background/" + Utils.user.getBackgroundUrl();
+            postBackgroundUrl = user.getBackgroundUrl().contains("https") ?
+                    user.getBackgroundUrl() : newUrl + "background/" + user.getBackgroundUrl();
 
             Log.d("AvatarUrl",postBackgroundUrl);
         }
@@ -183,9 +196,9 @@ public class AccountFragment extends Fragment {
         EditText edtAddress = view.findViewById(R.id.edtAddress);
         Button btnUpdate = view.findViewById(R.id.btnUpdate);
 
-        edtName.setText(Utils.user.getFullName());
-        edtPhone.setText(Utils.user.getPhone());
-        edtAddress.setText(Utils.user.getAddress());
+        edtName.setText(user.getFullName());
+        edtPhone.setText(user.getPhone());
+        edtAddress.setText(user.getAddress());
 
 
         btnUpdate.setOnClickListener(new View.OnClickListener() {
@@ -210,7 +223,7 @@ public class AccountFragment extends Fragment {
                     }
 
                 }
-                viewModel.updateUser((long)Utils.user.getId(), edtName.getText().toString(), edtPhone.getText().toString(),edtAddress.getText().toString());
+                viewModel.updateUser((long)user.getId(), edtName.getText().toString(), edtPhone.getText().toString(),edtAddress.getText().toString());
 
             }
         });
@@ -272,7 +285,7 @@ public class AccountFragment extends Fragment {
             btnChangePassword.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    viewModel.changePassword((long) Utils.user.getId(), edtOldPassword.getText().toString(), edtNewPassword.getText().toString());
+                    viewModel.changePassword((long) user.getId(), edtOldPassword.getText().toString(), edtNewPassword.getText().toString());
                 }
             });
         }
@@ -284,13 +297,13 @@ public class AccountFragment extends Fragment {
     public void showFullImageDialog(Context context,String mode) {
         String imageUrl = Utils.BASE_URL.replace("/api/", "/");
         if(mode.equals("avatar")) {
-            imageUrl  = Utils.user.getAvatarUrl().contains("https") ?
-                    Utils.user.getAvatarUrl() : imageUrl + "avatar/" + Utils.user.getAvatarUrl();
+            imageUrl  = user.getAvatarUrl().contains("https") ?
+                    user.getAvatarUrl() : imageUrl + "avatar/" + user.getAvatarUrl();
         }
         else {
             if(mode.equals("background") ){
-                imageUrl  = Utils.user.getBackgroundUrl().contains("https") ?
-                        Utils.user.getBackgroundUrl() : imageUrl + "background/" + Utils.user.getBackgroundUrl();
+                imageUrl  = user.getBackgroundUrl().contains("https") ?
+                        user.getBackgroundUrl() : imageUrl + "background/" + user.getBackgroundUrl();
             }
         }
 

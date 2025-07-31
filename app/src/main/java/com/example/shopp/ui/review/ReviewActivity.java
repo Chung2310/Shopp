@@ -2,6 +2,7 @@ package com.example.shopp.ui.review;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.shopp.R;
 import com.example.shopp.databinding.ActivityReviewBinding;
 import com.example.shopp.model.Book;
@@ -20,6 +22,7 @@ import com.example.shopp.model.Order;
 import com.example.shopp.model.OrderDetail;
 import com.example.shopp.model.Review;
 import com.example.shopp.model.User;
+import com.example.shopp.repository.UserRepository;
 import com.example.shopp.ui.order.OrderActivity;
 import com.example.shopp.util.Utils;
 
@@ -30,6 +33,8 @@ public class ReviewActivity extends AppCompatActivity {
 
     private ActivityReviewBinding reviewBinding;
     private ReviewViewModel mViewmodel;
+    private UserRepository userRepository;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,77 +50,133 @@ public class ReviewActivity extends AppCompatActivity {
 
         mViewmodel = new ViewModelProvider(this).get(ReviewViewModel.class);
 
+        userRepository = new UserRepository(getApplicationContext());
+        user = userRepository.getUser();
+
+        String newUrl = Utils.BASE_URL.replace("/api/", "/");
+
         actionToolBar();
 
-        Order order = (Order) getIntent().getSerializableExtra("order");
-
-        List<Long> bookIdList = new ArrayList<>();
+        Review review = (Review) getIntent().getSerializableExtra("reviewUpdate");
         List<String> bookTitleList = new ArrayList<>();
-
-        for (OrderDetail orderDetail : order.getOrderDetailDTOS()){
-            bookIdList.add( (long)orderDetail.getBook().getId());
-        }
-
-        checkReviewed( (long)Utils.user.getId(), bookIdList);
-
-        mViewmodel.getBookListId().observe(this, reviewedBookIds -> {
-            for (OrderDetail od : order.getOrderDetailDTOS()) {
-                Long id = (long) od.getBook().getId();
-                if (reviewedBookIds.contains(id)) {
-                    bookTitleList.add(od.getBook().getTitle());
-                }
-            }
-
+        if(review != null){
+            bookTitleList.add(review.getBookDTO().getTitle());
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
                     this,
                     android.R.layout.simple_spinner_item,
                     bookTitleList
             );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             reviewBinding.spinnerBooks.setAdapter(adapter);
-        });
 
-        mViewmodel = new ViewModelProvider(this,
-                ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(ReviewViewModel.class);
+            String imageUrl = review.getBookDTO() != null ? review.getBookDTO().getImageUrl() : null;
 
-        mViewmodel.getReviewList().observe(this, reviews -> {
-            if (reviews == null || reviews.isEmpty()) {
-                Toast.makeText(getApplicationContext(),
-                        "Đánh giá sản phẩm không thành công!!", Toast.LENGTH_SHORT).show();
+            String postBookUrl;
+            if (imageUrl != null && imageUrl.contains("https")) {
+                postBookUrl = imageUrl;
             } else {
-                Toast.makeText(getApplicationContext(),
-                        "Đánh giá sản phẩm thành công!!", Toast.LENGTH_SHORT).show();
+                postBookUrl = newUrl + "image/" + (imageUrl != null ? imageUrl : "default.png");
             }
-        });
 
-        reviewBinding.btnSubmitReview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Review review = new Review();
-                User user = new User();
-                user.setId(Utils.user.getId());
-                review.setUserDTO(user);
-                Book book = new Book();
-                book.setId((int) order.getOrderDetailDTOS().get(
-                        (int) reviewBinding.spinnerBooks.getSelectedItemId()).getBook().getId());
+            Glide.with(getApplicationContext())
+                    .load(postBookUrl)
+                    .placeholder(R.drawable.ic_android_black_24dp)
+                    .error(R.drawable.user)
+                    .into(reviewBinding.imageBook);
 
-                review.setBookDTO(book);
+            reviewBinding.ratingBar.setRating(review.getRating());
+            reviewBinding.edtComment.setText(review.getComments());
 
-                review.setComments(reviewBinding.edtComment.getText().toString());
-                review.setRating( (int) reviewBinding.ratingBar.getRating());
+            reviewBinding.btnSubmitReview.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Review review1 = new Review();
+                    review1.setId(review.getId());
+                    review1.setBookDTO(review.getBookDTO());
+                    review1.setUserDTO(review.getUserDTO());
+                    review1.setRating((int) reviewBinding.ratingBar.getRating());
+                    review1.setComments(reviewBinding.edtComment.getText().toString());
 
+                    mViewmodel.updateReviewById(review1);
 
-                if(review.getUserDTO() == null || review.getBookDTO() == null ||
-                        review.getComments().trim().isEmpty() || review.getRating() == 0){
-                    Toast.makeText(getApplicationContext(),"Thiếu thông tin yêu cầu!",Toast.LENGTH_SHORT).show();
+                    mViewmodel.getReviewList().observe(ReviewActivity.this, list -> {
+                        if(list.get(0) != null){
+                            Toast.makeText(getApplicationContext(),"Sửa đánh giá thành công!",Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(), HistoryReviewActivity.class);
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(getApplicationContext(),"Sửa đánh giá không thành công!",Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
-                else {
-                    mViewmodel.createReview(review);
+            });
+        }
+        else {
+            Order order = (Order) getIntent().getSerializableExtra("order");
+
+            List<Long> bookIds = new ArrayList<>();
+
+            mViewmodel = new ViewModelProvider(this,
+                    ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication())).get(ReviewViewModel.class);
+
+            List<Long> allBookIds = new ArrayList<>();
+            for (OrderDetail od : order.getOrderDetailDTOS()) {
+                allBookIds.add((long) od.getBook().getId());
+            }
+
+            checkReviewed((long) user.getId(), allBookIds);
+
+            mViewmodel.getBookListId().observe(this, unreviewedBookIds -> {
+                bookTitleList.clear();
+                bookIds.clear();
+
+                for (OrderDetail od : order.getOrderDetailDTOS()) {
+                    Long id = (long) od.getBook().getId();
+                    if (unreviewedBookIds.contains(id)) {
+                        bookTitleList.add(od.getBook().getTitle());
+                        bookIds.add(id);
+                    }
+                }
+
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_spinner_item,
+                        bookTitleList
+                );
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                reviewBinding.spinnerBooks.setAdapter(adapter);
+            });
+
+            reviewBinding.btnSubmitReview.setOnClickListener(v -> {
+                int selectedIndex = reviewBinding.spinnerBooks.getSelectedItemPosition();
+
+                if (selectedIndex < 0 || selectedIndex >= bookIds.size()) {
+                    Toast.makeText(getApplicationContext(), "Vui lòng chọn sản phẩm để đánh giá", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Review review1 = new Review();
+
+                review1.setUserDTO(user);
+
+                Book book = new Book();
+                book.setId(bookIds.get(selectedIndex).intValue()); // lấy đúng ID sách chưa được đánh giá
+                review1.setBookDTO(book);
+
+                review1.setComments(reviewBinding.edtComment.getText().toString());
+                review1.setRating((int) reviewBinding.ratingBar.getRating());
+
+                if (review1.getComments().trim().isEmpty() || review1.getRating() == 0) {
+                    Toast.makeText(getApplicationContext(), "Thiếu thông tin yêu cầu!", Toast.LENGTH_SHORT).show();
+                } else {
+                    mViewmodel.createReview(review1);
                     Intent intent = new Intent(getApplicationContext(), OrderActivity.class);
                     startActivity(intent);
                 }
-            }
-        });
+            });
+
+
+        }
+
     }
 
     private void checkReviewed(Long userId, List<Long> bookIds){
