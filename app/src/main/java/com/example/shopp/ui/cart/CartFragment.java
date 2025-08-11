@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.shopp.R;
+import com.example.shopp.activity.MainActivity;
 import com.example.shopp.databinding.FragmentCartBinding;
 import com.example.shopp.model.CartItem;
 import com.example.shopp.model.OrderDetail;
@@ -147,7 +148,7 @@ public class CartFragment extends Fragment {
 
                     mViewModel.createOrder(purchaseRequest);
 
-                    Intent intent = new Intent(getContext(), OrderActivity.class);
+                    Intent intent = new Intent(getContext(), MainActivity.class);
                     startActivity(intent);
                     Toast.makeText(getContext(),"Đặt hàng thành công!",Toast.LENGTH_SHORT).show();
                 }

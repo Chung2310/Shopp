@@ -1,24 +1,19 @@
 package com.example.shopp.retrofit;
 
-import com.example.shopp.model.AccessTokenModel;
-import com.example.shopp.model.BookModel;
-import com.example.shopp.model.BooleanMessage;
+import com.example.shopp.model.Book;
+import com.example.shopp.model.CartItem;
 import com.example.shopp.model.CartItemRequest;
-import com.example.shopp.model.CartModel;
 import com.example.shopp.model.ChangePasswordRequest;
-import com.example.shopp.model.ChechReviewedModel;
-import com.example.shopp.model.ImageModel;
+import com.example.shopp.model.Contact;
 import com.example.shopp.model.LoginRequest;
-import com.example.shopp.model.LongModel;
-import com.example.shopp.model.MessageModel;
-import com.example.shopp.model.OrderModel;
+import com.example.shopp.model.Order;
 import com.example.shopp.model.PurchaseRequest;
 import com.example.shopp.model.RefreshTokenRequest;
 import com.example.shopp.model.RegisterRequest;
+import com.example.shopp.model.ResultModel;
 import com.example.shopp.model.Review;
-import com.example.shopp.model.ReviewModel;
-import com.example.shopp.model.UserAdminModel;
-import com.example.shopp.model.UserModel;
+import com.example.shopp.model.User;
+import com.example.shopp.model.UserAdmin;
 import com.example.shopp.model.UserUpdateRequest;
 
 import java.util.List;
@@ -37,91 +32,111 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface Api {
+    @GET("ping")
+    Observable<ResultModel<String>> ping();
 
     @GET("book")
-    Observable<BookModel> getAllBook();
+    Observable<ResultModel<List<Book>>> getAllBook(
+            @Query("page") int page,
+            @Query("size") int size
+    );
 
     @GET("book/{bookId}")
-    Observable<BookModel> getBookById(@Path("bookId") Long bookId);
+    Observable<ResultModel<Book>> getBookById(@Path("bookId") Long bookId);
 
     @GET("cart/{userId}")
-    Observable<CartModel> getCartByUserId(@Path("userId") int userId);
+    Observable<ResultModel<List<CartItem>>> getCartByUserId(@Path("userId") int userId);
 
     @PUT("cart/update")
-    Observable<CartModel> updateCartItem(@Body CartItemRequest cartItemRequest);
+    Observable<ResultModel<List<CartItem>>> updateCartItem(@Body CartItemRequest cartItemRequest);
 
     @DELETE("cart/remove")
-    Observable<CartModel> deleteCartItem(
+    Observable<ResultModel<List<CartItem>>> deleteCartItem(
             @Query("userId") Long userId,
             @Query("bookId") Long bookId
     );
 
     @POST("cart/add")
-    Observable<CartModel> addCartItem(@Body CartItemRequest cartItemRequest);
+    Observable<ResultModel<List<CartItem>>> addCartItem(@Body CartItemRequest cartItemRequest);
 
     @Headers("Content-Type: application/json")
     @POST("auth/login")
-    Observable<UserModel> login(@Body LoginRequest loginRequest);
+    Observable<ResultModel<User>> login(@Body LoginRequest loginRequest);
 
     @POST("auth/register")
-    Observable<UserModel> register(@Body RegisterRequest registerRequest);
+    Observable<ResultModel<User>> register(@Body RegisterRequest registerRequest);
 
     @POST("auth/refreshToken")
-    Observable<AccessTokenModel> refresh(@Body RefreshTokenRequest request);
+    Observable<ResultModel<RefreshTokenRequest>> refresh(@Body RefreshTokenRequest request);
 
     @POST("user/update")
-    Observable<UserModel> updateUser(@Body UserUpdateRequest userUpdateRequest);
+    Observable<ResultModel<User>> updateUser(@Body UserUpdateRequest userUpdateRequest);
 
     @POST("user/changePass")
-    Observable<MessageModel> changePassword(@Body ChangePasswordRequest changePasswordRequest);
+    Observable<ResultModel<String>> changePassword(@Body ChangePasswordRequest changePasswordRequest);
 
     @Multipart
     @POST("user/uploadImage/{userId}")
-    Observable<ImageModel> uploadImage(
+    Observable<ResultModel<String>> uploadImage(
             @Path("userId") int id,
             @Query("mode") String mode,
             @Part MultipartBody.Part image
     );
 
     @GET("book/title")
-    Observable<BookModel> getBookByTitle(@Query("title") String title);
+    Observable<ResultModel<List<Book>>> getBookByTitle(@Query("title") String title);
 
     @GET("order/{userId}")
-    Observable<OrderModel> getOrderByUserId(@Path("userId") Long id);
+    Observable<ResultModel<List<Order>>> getOrderByUserId(@Path("userId") Long id);
 
     @POST("order")
-    Observable<MessageModel> createOrder(@Body PurchaseRequest purchaseRequest);
+    Observable<ResultModel<String>> createOrder(@Body PurchaseRequest purchaseRequest);
 
     @POST("review")
-    Observable<ReviewModel> createReview(@Body Review review);
+    Observable<ResultModel<List<Review>>> createReview(@Body Review review);
 
     @GET("review/book/{id}")
-    Observable<ReviewModel> getReviewByBookId(@Path("id") Long bookId);
+    Observable<ResultModel<List<Review>>> getReviewByBookId(@Path("id") Long bookId);
 
     @GET("review/user/{id}")
-    Observable<ReviewModel> getReviewByUserId(@Path("id") Long userId);
+    Observable<ResultModel<List<Review>>> getReviewByUserId(@Path("id") Long userId);
 
     @POST("review/checkReviewed/{userId}")
-    Observable<ChechReviewedModel> checkReviewed(
+    Observable<ResultModel<List<Long>>> checkReviewed(
             @Path("userId") Long userId,
             @Body List<Long> bookId
     );
 
     @DELETE("review/{id}")
-    Observable<MessageModel> deleteReviewById(@Path("id") Long id);
+    Observable<ResultModel<String>> deleteReviewById(@Path("id") Long id);
 
     @POST("review/update")
-    Observable<ReviewModel> updateReviewById(@Body Review review);
+    Observable<ResultModel<List<Review>>> updateReviewById(@Body Review review);
 
     @GET("admin/users")
-    Observable<UserAdminModel> getAllUserAdmin();
+    Observable<ResultModel<List<UserAdmin>>> getAllUserAdmin();
 
     @PUT("admin/user/role/{id}")
-    Observable<MessageModel> setRoleAdminByUserId(@Path("id") Long id);
+    Observable<ResultModel<String>> setRoleAdminByUserId(@Path("id") Long id);
+
+    @DELETE("admin/user/delete/{userId}")
+    Observable<ResultModel<String>> deleteUser(@Path("userId") Long userId);
 
     @POST("reviewLike")
-    Observable<BooleanMessage> toggleLike(@Query("userId") Long userId, @Query("reviewId") Long reviewId);
+    Observable<ResultModel<Boolean>> toggleLike(@Query("userId") Long userId, @Query("reviewId") Long reviewId);
 
     @PUT("reviewLike")
-    Observable<LongModel> getLikeCount(@Query("reviewId") Long reviewId);
+    Observable<ResultModel<Long>> getLikeCount(@Query("reviewId") Long reviewId);
+
+    @GET("contact/{userId}")
+    Observable<ResultModel<List<Contact>>> getContactByUserId(@Path("userId") Long userId);
+
+    @POST("contact")
+    Observable<ResultModel<String>> createContact(@Body Contact contact);
+
+    @DELETE("contact/{userId}/{userContactId}")
+    Observable<ResultModel<String>> deleteContract(
+            @Path("userId") Long userId,
+            @Path("userContactId") Long userContactId
+    );
 }

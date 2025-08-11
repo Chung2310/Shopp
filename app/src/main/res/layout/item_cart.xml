@@ -2,7 +2,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_marginBottom="10dp"
+    android:background="@drawable/gb_bottom_purple"
+    android:layout_marginTop="10dp"
     android:padding="12dp">
 
     <!-- Ảnh sản phẩm -->

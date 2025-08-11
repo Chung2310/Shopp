@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:orientation="vertical"
+    android:background="@color/yellow"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.order.OrderActivity">
@@ -11,9 +12,9 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarOrder"
         app:title="Lịch sử Đặt hàng"
-        android:background="#FF5722"
+        android:background="@color/purple"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@color/white"
+        app:titleTextColor="@color/yellow"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"/>
 

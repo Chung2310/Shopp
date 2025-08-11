@@ -38,9 +38,12 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     private HomeViewModel mViewModel;
     private BookAdapter bookAdapter;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
 
     private List<Book> fullBookList = new ArrayList<>();
-
+    int size =10;
+    int page = 0;
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -59,11 +62,24 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+
+        mViewModel.getAllBook(page,size);
+
         mViewModel.getBookList().observe(getViewLifecycleOwner(), books -> {
-            binding.recycleViewHome.setHasFixedSize(true);
+            isLoading = false;
+            if ((books.size() < size)){
+                isLastPage = true;
+            }
+
             fullBookList = books;
             setBookAdapter();
         });
+
+
+
+
+
+
 
         String[] banners = {
                 "https://thietkelogo.edu.vn/uploads/images/thiet-ke-do-hoa-khac/banner-sach/3.jpg",
@@ -112,37 +128,6 @@ public class HomeFragment extends Fragment {
                 setBookAdapter();
             }
         });
-
-
-//        new TabLayoutMediator(binding.tabLayout, binding.viewPager,
-//                (tab, position) -> {
-//                    switch (position) {
-//                        case 0:
-//                            tab.setText(String.valueOf(R.string.all));
-//                            break;
-//                        case 1:
-//                            tab.setText(String.valueOf(R.string.programming));
-//                            break;
-//                        case 2:
-//                            tab.setText(String.valueOf(R.string.education));
-//                            break;
-//                        case 3:
-//                            tab.setText(String.valueOf(R.string.fantasy));
-//                            break;
-//                        case 4:
-//                            tab.setText(String.valueOf(R.string.software_development));
-//                            break;
-//                        case 5:
-//                            tab.setText(String.valueOf(R.string.software_engineering));
-//                            break;
-//                        case 6:
-//                            tab.setText(String.valueOf(R.string.career));
-//                            break;
-//                        case 7:
-//                            tab.setText(String.valueOf(R.string.web_development));
-//                            break;
-//                    }
-//                }).attach();
 
 
     }

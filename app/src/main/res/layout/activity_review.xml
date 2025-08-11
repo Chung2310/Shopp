@@ -2,15 +2,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/main"
+    android:background="@color/yellow"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolBarOrder"
         app:title="Đánh giá sản phẩm"
-        android:background="#FF5722"
+        android:background="@color/purple"
         app:layout_constraintTop_toTopOf="parent"
-        app:titleTextColor="@color/white"
+        app:titleTextColor="@color/yellow"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"/>
 
@@ -22,6 +23,7 @@
         <!-- Spinner hoặc RecyclerView để chọn sách -->
         <Spinner
             android:id="@+id/spinnerBooks"
+            android:background="@drawable/gb_bottom_purple"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
@@ -58,7 +60,7 @@
             android:id="@+id/btnSubmitReview"
             android:text="Gửi đánh giá"
             android:layout_width="match_parent"
-            android:backgroundTint="#FF5722"
+            android:backgroundTint="@color/purple"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"/>
     </LinearLayout>

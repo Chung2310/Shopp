@@ -169,6 +169,7 @@ public class ReviewActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Thiếu thông tin yêu cầu!", Toast.LENGTH_SHORT).show();
                 } else {
                     mViewmodel.createReview(review1);
+                    Toast.makeText(this,"Đánh giá thành công!",Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), OrderActivity.class);
                     startActivity(intent);
                 }

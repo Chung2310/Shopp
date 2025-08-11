@@ -36,9 +36,11 @@ public class CartViewModel extends AndroidViewModel {
     public CartViewModel(@NotNull Application application) {
         super(application);
         api = RetrofitClient.getInstance(Utils.BASE_URL, application ).create(Api.class);
+        userRepository = new UserRepository(application);
         user = userRepository.getUser();
         getCart(user.getId());
     }
+
 
     public LiveData<List<CartItem>> getCartList(){
         return cartList;

@@ -46,13 +46,13 @@ public class DetailBookActivity extends AppCompatActivity {
     private ReviewLikeViewModel reviewLikeViewModel;
     private UserRepository userRepository;
     private User user;
+    private Book book;
     private boolean isExpanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_detail_book);
 
         binding = ActivityDetailBookBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -62,7 +62,7 @@ public class DetailBookActivity extends AppCompatActivity {
         userRepository = new UserRepository(getApplicationContext());
         user = userRepository.getUser();
 
-        Book book = (Book) getIntent().getSerializableExtra("book");
+        book = (Book) getIntent().getSerializableExtra("book");
 
         reviewViewModel.getReviewByBookId((long) book.getId());
 
@@ -136,6 +136,7 @@ public class DetailBookActivity extends AppCompatActivity {
         DecimalFormat decimalFormat = new DecimalFormat("###,###,###");
         binding.txtPrice.setText("Giá: "+decimalFormat.format(Double.parseDouble(String.valueOf(book.getPrice())))+ "Đ");
         binding.txtQuantity.setText("Số lượng: "+book.getQuantity());
+        binding.txtQuantityPurchased.setText("Số lượng đã bán: "+book.getQuantityPurchased());
         binding.txtLanguage.setText("Ngôn ngữ: "+book.getLanguage());
         binding.txtGenre.setText("Thế loại: "+book.getGenre());
         binding.txtDescription.setText(book.getDescription_book());
@@ -162,6 +163,10 @@ public class DetailBookActivity extends AppCompatActivity {
             int quantity = Integer.parseInt(quantityStr);
             if (quantity <= 0) {
                 Toast.makeText(this, "Số lượng phải lớn hơn 0", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(quantity > book.getQuantity()) {
+                Toast.makeText(this, "Số lượng sản phẩm không đủ!", Toast.LENGTH_SHORT).show();
                 return;
             }
 

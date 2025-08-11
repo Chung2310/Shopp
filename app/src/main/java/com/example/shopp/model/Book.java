@@ -14,6 +14,15 @@ public class Book implements Serializable {
     private String genre;
     private String language;
     private String imageUrl;
+    private int quantityPurchased;
+
+    public int getQuantityPurchased() {
+        return quantityPurchased;
+    }
+
+    public void setQuantityPurchased(int quantityPurchased) {
+        this.quantityPurchased = quantityPurchased;
+    }
 
     public int getId() {
         return id;

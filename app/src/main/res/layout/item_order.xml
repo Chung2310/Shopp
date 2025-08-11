@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_marginTop="10dp"
-    android:background="@drawable/bg_order_detail_border"
+    android:background="@drawable/gb_bottom_yellow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <LinearLayout
@@ -23,8 +23,8 @@
             android:id="@+id/tvOrderStatus"
             android:gravity="center"
             android:textStyle="bold"
-            android:background="#FFEB3B"
-            android:textColor="#FF0000"
+            android:background="@drawable/gb_bottom_purple"
+            android:textColor="@color/white"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"/>
@@ -34,19 +34,31 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#000000" />
+        android:background="@color/purple" />
 
     <TextView
-        android:layout_marginLeft="10dp"
         android:id="@+id/tvAddress"
+        android:background="@drawable/gb_bottom_purple"
+        android:textColor="@color/white"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+         />
+
     <TextView
         android:id="@+id/tvPhone"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="10dp"
+        android:background="@drawable/gb_bottom_purple"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <TextView
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/gb_bottom_purple"
         android:id="@+id/tvDescription"
         android:layout_marginLeft="10dp"
         android:layout_width="match_parent"
@@ -84,7 +96,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="5dp"
-        android:background="#FF5722"
+        android:background="@drawable/gb_bottom_purple"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 </LinearLayout>

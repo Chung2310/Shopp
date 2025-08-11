@@ -61,7 +61,6 @@ public class AccountFragment extends Fragment {
         binding = FragmentAccountBinding.inflate(inflater,container,false);
         View root = binding.getRoot();
 
-        viewModel = new ViewModelProvider(this).get(AccountViewModel.class);
         userRepository = new UserRepository(getContext());
         user = userRepository.getUser();
         return root;

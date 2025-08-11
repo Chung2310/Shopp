@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.shopp.model.User;
+import com.example.shopp.model.UserAdmin;
 import com.example.shopp.retrofit.Api;
 import com.example.shopp.retrofit.RetrofitClient;
 import com.example.shopp.util.Utils;
@@ -20,7 +21,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class UserAdminViewModel extends AndroidViewModel {
-    private MutableLiveData<List<User>> listMutableLiveData = new MutableLiveData<>();
+    private MutableLiveData<List<UserAdmin>> listMutableLiveData = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Api api;
 
@@ -29,7 +30,7 @@ public class UserAdminViewModel extends AndroidViewModel {
         api = RetrofitClient.getInstance(Utils.BASE_URL, application).create(Api.class);
     }
 
-    public MutableLiveData<List<User>> getListMutableLiveData() {
+    public MutableLiveData<List<UserAdmin>> getListMutableLiveData() {
         return listMutableLiveData;
     }
 

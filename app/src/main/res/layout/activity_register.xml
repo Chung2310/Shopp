@@ -4,6 +4,7 @@
     android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/yellow"
     android:padding="24dp"
     android:fillViewport="true">
 
@@ -16,10 +17,11 @@
         <TextView
             android:id="@+id/tvTitle"
             android:gravity="center"
+            android:textColor="@color/purple"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Đăng ký tài khoản"
-            android:textSize="24sp"
+            android:textSize="25dp"
             android:textStyle="bold"
             android:layout_marginBottom="24dp" />
 
@@ -29,6 +31,8 @@
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtFullName"
+                android:textColor="@color/yellow"
+                android:background="@drawable/gb_bottom_purple"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Họ và tên"
@@ -41,9 +45,11 @@
             android:layout_height="wrap_content">
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtEmail"
+                android:background="@drawable/gb_bottom_purple"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
+                android:textColor="@color/yellow"
                 android:inputType="textEmailAddress"
                 android:layout_marginTop="12dp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -56,8 +62,10 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtPassword"
+                android:background="@drawable/gb_bottom_purple"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/yellow"
                 android:hint="Mật khẩu"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -73,6 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Mật khẩu"
+                android:background="@drawable/gb_bottom_purple"
+                android:textColor="@color/yellow"
                 android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -80,7 +90,7 @@
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/gb_bottom_orange"
+            android:background="@drawable/gb_bottom_purple"
             android:text="Đăng ký"
             android:layout_marginTop="24dp" />
 

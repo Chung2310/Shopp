@@ -24,6 +24,7 @@ public class SplashViewModel extends AndroidViewModel {
     private MutableLiveData<RefreshTokenRequest> refreshTokenRequestMutableLiveData = new MutableLiveData<>();
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Api api;
+    private MutableLiveData<Integer> statusConnect = new MutableLiveData<>();
 
     public SplashViewModel(@NonNull Application application) {
         super(application);
@@ -58,5 +59,26 @@ public class SplashViewModel extends AndroidViewModel {
 
     public MutableLiveData<RefreshTokenRequest> getRefreshTokenRequestMutableLiveData() {
         return refreshTokenRequestMutableLiveData;
+    }
+    public void pingServer(){
+        compositeDisposable.add(api.ping()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        stringResultModel -> {
+                            if (stringResultModel.getStatus() == 200){
+                                statusConnect.setValue(200);
+                            }
+                            else {
+                                statusConnect.setValue(0);
+                            }
+                        },throwable -> {
+                            Log.d("SplashViewModel", throwable.getMessage());
+                        }
+                ));
+    }
+
+    public MutableLiveData<Integer> getStatusConnect() {
+        return statusConnect;
     }
 }

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.chat.ChatDetailActivity">
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/materialToolBarMessage"
+        android:layout_width="match_parent"
+        android:background="@color/purple"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/circleImageMessager"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            />
+        <TextView
+            android:layout_marginStart="5dp"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:id="@+id/tvNameContactMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.appbar.MaterialToolbar>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMessages"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp" />
+
+    <!-- Khung nhập tin nhắn -->
+    <LinearLayout
+        android:background="@color/purple"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_margin="10dp"
+            android:background="@drawable/gb_bottom_yellow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_marginStart="5dp"
+                android:background="@color/yellow"
+                android:id="@+id/editTextMessage"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="Nhập tin nhắn..." />
+
+            <ImageButton
+                android:id="@+id/buttonSend"
+                android:background="@color/yellow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:src="@android:drawable/ic_menu_send"
+                android:contentDescription="Gửi" />
+        </LinearLayout>
+
+    </LinearLayout>
+</LinearLayout>

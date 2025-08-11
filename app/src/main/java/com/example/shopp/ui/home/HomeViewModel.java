@@ -33,16 +33,19 @@ public class HomeViewModel extends AndroidViewModel {
     public HomeViewModel(@NotNull Application application){
         super(application);
         api = RetrofitClient.getInstance(Utils.BASE_URL, application).create(Api.class);
-        getAllBook();
+
     }
-    public void getAllBook(){
-        compositeDisposable.add(api.getAllBook()
+    public void getAllBook(int page, int size){
+        compositeDisposable.add(api.getAllBook(page, size)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         bookModel -> {
                             if (bookModel.getStatus() == 200){
-                                bookList.setValue(bookModel.getResult());
+                                List<Book> current = bookList.getValue();
+                                if (current == null) current = new ArrayList<>();
+                                current.addAll(bookModel.getResult());
+                                bookList.setValue(current);
                                 Log.d("HomeViewModel",bookModel.getMessage());
                             }
                             else {

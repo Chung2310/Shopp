@@ -42,7 +42,7 @@ public class ReviewLikeViewModel extends AndroidViewModel {
                         booleanMessage -> {
                             if (booleanMessage.getStatus() == 200){
                                 Log.d("ReviewLikeViewModel", booleanMessage.getMessage());
-                                isLiked.setValue(booleanMessage.isResult());
+                                isLiked.setValue(booleanMessage.getResult());
                             }
                             else{
                                 Log.d("ReviewLikeViewModel", booleanMessage.getMessage());

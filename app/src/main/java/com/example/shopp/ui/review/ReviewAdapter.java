@@ -101,15 +101,27 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    int currentCount;
+                    try {
+                        currentCount = Integer.parseInt(holder.txtHeartCount.getText().toString());
+                    } catch (NumberFormatException e) {
+                        currentCount = 0;
+                    }
+
                     if (isLiked[0]) {
                         // Unlike
+                        currentCount = Math.max(0, currentCount - 1); // tránh số âm
                         holder.imgHeart.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.love));
                     } else {
                         // Like
+                        currentCount += 1;
                         holder.imgHeart.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.love1));
                     }
-                    listener.onLikeClicked(review.getId());
+
+                    holder.txtHeartCount.setText(String.valueOf(currentCount));
+                    listener.onLikeClicked(review.getId()); // Gọi API hoặc xử lý logic like
                     isLiked[0] = !isLiked[0]; // toggle trạng thái
+
                 }
 
                 @Override

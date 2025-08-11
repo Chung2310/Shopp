@@ -9,7 +9,7 @@
         android:id="@+id/chat_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="#FF5722"
+        android:background="@color/purple"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
         app:title="@string/cart"
         app:navigationIcon="@drawable/grocerystore" />
@@ -53,7 +53,7 @@
             android:id="@+id/btnCheckout"
             android:layout_width="wrap_content"
             android:textColor="@color/white"
-            android:background="@drawable/gb_bottom_orange"
+            android:background="@drawable/gb_bottom_purple"
             android:layout_height="wrap_content"
             android:text="@string/purchase" />
 

@@ -36,6 +36,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -79,12 +80,26 @@ public class SplashActivity extends AppCompatActivity {
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
         } catch (GeneralSecurityException | IOException e) {
-            Log.e(TAG, "Failed to initialize secure preferences", e);
-            Toast.makeText(this, "Lỗi bảo mật", Toast.LENGTH_SHORT).show();
-            return;
+            Log.e(TAG, "EncryptedSharedPreferences lỗi - có thể do cài lại app", e);
+
+            getSharedPreferences("TokenAuth", MODE_PRIVATE).edit().clear().apply();
         }
 
-        setupAnimation();
+        try {
+            viewModel.pingServer();
+
+            viewModel.getStatusConnect().observe(this, ping -> {
+                if(ping == 200){
+                    setupAnimation();
+                }
+                else {
+                    showError("Không thể kết nối tới server");
+                }
+            });
+        } catch (RuntimeException e){
+            showError("Không thể kết nối tới server");
+        }
+
 
         new Handler().postDelayed(this::handleTokenCheck, 3000);
     }
@@ -121,11 +136,14 @@ public class SplashActivity extends AppCompatActivity {
                 User user = userRepository.getUser();
 
                 if (user != null) {
-                    if(user.getRole() == "ADMIN"){
+                    if(Objects.equals(user.getRole(), "ROLE_ADMIN")){
                         Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
                         startActivity(intent);
+                        return;
                     }
                     startMainActivity();
+                } else {
+                    Log.d("token", "User không có dữ liệu!");
                 }
 
             } else if (isRefreshTokenValid) {

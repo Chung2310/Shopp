@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 userRepository.saveUser(user);
 
-                if(Objects.equals(user.getRole(), "ADMIN")){
+                if(Objects.equals(user.getRole(), "ROLE_ADMIN")){
                     Intent intent = new Intent(getApplicationContext(), AdminActivity.class);
                     startActivity(intent);
                 }

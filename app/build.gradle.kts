@@ -79,5 +79,12 @@ dependencies {
     implementation ("androidx.security:security-crypto:1.1.0-alpha06")
 
     implementation ("androidx.security:security-identity-credential:1.0.0-alpha03")
+    implementation ("com.github.NaikSoftware:StompProtocolAndroid:1.6.6")
 
+    implementation ("com.github.akarnokd:rxjava3-bridge:3.0.2")
+
+    implementation ("org.java-websocket:Java-WebSocket:1.5.4")
+
+    implementation ("io.reactivex.rxjava2:rxjava:2.2.21")
+    implementation ("com.github.nkzawa:socket.io-client:0.6.0")
 }

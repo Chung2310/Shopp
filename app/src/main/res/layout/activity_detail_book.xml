@@ -5,7 +5,7 @@
     android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F9F9F9">
+    android:background="@color/yellow">
 
     <!-- Nội dung thông tin sách -->
     <ScrollView
@@ -53,9 +53,11 @@
             <TextView android:id="@+id/txtGenre" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Thể loại:" android:textSize="16sp" />
             <TextView android:id="@+id/txtLanguage" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Ngôn ngữ:" android:textSize="16sp" />
             <TextView android:id="@+id/txtQuantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Số lượng:" android:textSize="16sp" />
+            <TextView android:id="@+id/txtQuantityPurchased" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Số lượng đã bán:" android:textSize="16sp" />
 
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mô tả:" android:textSize="18sp" android:textStyle="bold" android:layout_marginTop="12dp" />
             <TextView android:id="@+id/txtDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Mô tả ở đây..." android:textSize="15sp" android:lineSpacingExtra="4dp" android:layout_marginTop="4dp" />
+
             <Button
                 android:id="@+id/buttonAddToCart"
                 android:layout_width="match_parent"
@@ -63,9 +65,9 @@
                 android:text="🛒 Thêm vào giỏ hàng"
                 android:textSize="16sp"
                 android:elevation="20dp"
+                android:background="@drawable/gb_bottom_purple"
                 android:translationZ="20dp"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#E53935"
+                android:textColor="@color/yellow"
                 android:layout_gravity="bottom"
                 android:layout_margin="16dp"/>
         </LinearLayout>
@@ -100,7 +102,7 @@
             android:textStyle="bold"
             android:textSize="18sp"
             android:padding="16dp"
-            android:textColor="#000000"/>
+            android:textColor="@color/purple"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewReviews"

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import com.example.shopp.R;
 import com.example.shopp.databinding.FragmentUserAdminBinding;
 import com.example.shopp.model.User;
+import com.example.shopp.model.UserAdmin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +27,6 @@ public class UserAdminFragment extends Fragment {
     private UserAdminViewModel mViewModel;
     private FragmentUserAdminBinding binding;
     private UserAdminAdapter userAdminAdapter;
-
-    public static UserAdminFragment newInstance() {
-        return new UserAdminFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -56,7 +54,7 @@ public class UserAdminFragment extends Fragment {
 
     }
 
-    private void setAdapter(List<User> users) {
+    private void setAdapter(List<UserAdmin> users) {
         userAdminAdapter = new UserAdminAdapter(users, getContext());
         binding.recyclerViewUserAmin.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerViewUserAmin.setAdapter(userAdminAdapter);

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#FFFFFF">
+    android:background="@color/yellow">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
         <!-- Header (Ảnh bìa + Avatar) -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:background="@drawable/gb_bottom_purple"
             android:layout_height="260dp">
 
             <!-- Ảnh bìa -->
@@ -48,6 +49,7 @@
             android:orientation="vertical"
             android:gravity="center_horizontal"
             android:paddingTop="22dp"
+
             android:paddingBottom="16dp">
 
             <LinearLayout
@@ -85,12 +87,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#EEEEEE" />
+            android:background="@color/purple" />
 
         <!-- Các chức năng -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:orientation="vertical"
             android:paddingHorizontal="16dp">
 
@@ -103,9 +106,10 @@
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:background="@drawable/gb_bottom_purple">
 
                 <ImageView
+                    android:layout_marginStart="10dp"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/grocerystore"
@@ -113,6 +117,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:textColor="@color/yellow"
                     android:layout_height="wrap_content"
                     android:text="@string/my_order"
                     android:textSize="16sp" />
@@ -126,15 +131,18 @@
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:layout_marginTop="5dp"
+                android:background= "@drawable/gb_bottom_purple">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_marginStart="10dp"
                     android:src="@drawable/feedback"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
+                    android:textColor="@color/yellow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/history_review"
@@ -149,18 +157,21 @@
                 android:orientation="horizontal"
                 android:paddingVertical="16dp"
                 android:clickable="true"
+                android:layout_marginTop="5dp"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:background="@drawable/gb_bottom_purple">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_marginStart="10dp"
                     android:src="@drawable/padlock"
                     android:layout_marginEnd="12dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/yellow"
                     android:text="@string/change_password"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -174,11 +185,13 @@
                 android:paddingVertical="16dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:background="?android:attr/selectableItemBackground">
+                android:layout_marginTop="5dp"
+                android:background="@drawable/gb_bottom_purple">
 
                 <ImageView
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:layout_marginStart="10dp"
                     android:src="@drawable/out"
                     android:layout_marginEnd="12dp" />
 
